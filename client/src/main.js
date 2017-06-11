@@ -6,7 +6,9 @@ import App from './App';
 
 Vue.config.productionTip = false;
 
-Vue.use(VueSocketIO, 'http://localhost:3000');
+const socketURI = process.env.NODE_ENV === 'production' ? '/' : 'http://localhost:3000';
+
+Vue.use(VueSocketIO, socketURI);
 
 /* eslint-disable no-new */
 new Vue({

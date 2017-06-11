@@ -1,15 +1,13 @@
-const app = require('express')()
+const express = require('express')
+const app = express()
 const http = require('http').Server(app)
 const io = require('socket.io')(http)
 const yahoo = require('yahoo-finance')
+const path = require('path')
 
 const port = process.env.PORT || 6000
 
 let stocks = ['AAPL', 'FB', 'TSLA']
-
-app.get('/', (req, res) => {
-  res.json({ status: 'API online' })
-})
 
 io.on('connection', (socket) => {
   console.log('user connected')
@@ -91,6 +89,12 @@ io.on('connection', (socket) => {
       })
     })
   })
+})
+
+app.use(express.static(path.join(__dirname, 'public')))
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '/public/index.html'))
 })
 
 http.listen(port, () => {
