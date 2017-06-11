@@ -3,6 +3,7 @@
     <chart v-bind:data="stockData"></chart>
     <info
       v-bind:stockInfo="stockInfo"
+      v-bind:errMsg="errMsg"
       v-on:addStock="checkStock"
     ></info>
     <footer class="text-center">
@@ -28,6 +29,7 @@ import Info from './Info'
 export default {
   data: () => ({
     isConnected: false,
+    errMsg: '',
     stockList: [],
     stockData: [],
     stockInfo: [],
@@ -52,9 +54,9 @@ export default {
 
     stock_info(data) {
       console.log('stock_info received')
-      this.stockInfo = data.map(stockProf => ({
-        ...stockProf.summaryProfile,
-        stock: stockProf.stock,
+      this.stockInfo = data.map(stockProfile => ({
+        ...stockProfile.summaryProfile,
+        stock: stockProfile.stock,
       }))
     },
 
@@ -63,6 +65,8 @@ export default {
       if (data.valid) {
         this.stockList.push(data.stock)
         this.$socket.emit('update_stock_list', this.stockList)
+      } else {
+        this.errMsg = 'Invalid stock code'
       }
     },
   },
@@ -73,7 +77,12 @@ export default {
 
   methods: {
     checkStock(stockName) {
-      this.$socket.emit('check_stock_valid', stockName.toUpperCase())
+      this.errMsg = '';
+      if (this.stockList.indexOf(stockName.toUpperCase()) === -1) {
+        this.$socket.emit('check_stock_valid', stockName.toUpperCase())
+      } else {
+        this.errMsg = 'Stock already exists'
+      }
     },
   },
 

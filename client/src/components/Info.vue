@@ -36,6 +36,11 @@
                 </button>
               </div>
             </div>
+            <div class="row">
+              <div class="col-xs-12 error" v-if="errMsg">
+                {{errMsg}}
+              </div>
+            </div>
           </form>
         </div>
       </div>
@@ -46,7 +51,10 @@
 <script>
 export default {
   name: 'Info',
-  props: ['stockInfo'],
+  props: [
+    'stockInfo',
+    'errMsg',
+  ],
   data: () => ({
     newStockName: '',
   }),
@@ -76,4 +84,8 @@ export default {
 
   .well
     height: 225px
+
+  .error
+    color: red
+    padding-top: 5px
 </style>
