@@ -17,7 +17,7 @@
           <p>{{info.longBusinessSummary.slice(0, 160) + '...'}}</p>
         </div >
       </div>
-      <div class="col-sm-4 stock-add">
+      <div v-if="stockInfo.length !== 0" class="col-sm-4 stock-add">
         <div class="well">
           <h3>Add Stock</h3>
           <form v-on:submit.prevent="onAdd">
@@ -51,8 +51,13 @@ export default {
     newStockName: '',
   }),
   methods: {
-    onAdd(e) {
-      console.log(e)
+    onAdd() {
+      this.$emit('addStock', this.newStockName)
+    },
+  },
+  watch: {
+    stockInfo() {
+      this.newStockName = ''
     },
   },
 }

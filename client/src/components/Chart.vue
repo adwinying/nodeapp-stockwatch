@@ -24,7 +24,7 @@ export default {
     Highcharts.setOptions({
       ...chartTheme,
     })
-    this.redrawChart()
+    this.drawChart()
   },
   methods: {
     sortArrAsc(arr) {
@@ -33,7 +33,7 @@ export default {
     compileData(data) {
       return data.map(dataPoint => [
         new Date(dataPoint.date).getTime(),
-        dataPoint.high,
+        dataPoint.close,
       ])
     },
     compileSeries(stockName, data) {
@@ -47,15 +47,20 @@ export default {
     },
     handleDataChange() {
       const stockNames = Object.keys(this.data)
+      this.stockData = []
       stockNames.forEach((stockName) => {
         this.stockData.push(this.compileSeries(
           stockName,
           this.sortArrAsc(this.compileData(this.data[stockName])),
         ))
       })
-      this.redrawChart()
+
+      while (this.chart.series.length > 0) {
+        this.chart.series[0].remove(false)
+      }
+      this.drawChart()
     },
-    redrawChart() {
+    drawChart() {
       this.chart = Highcharts.stockChart(this.$refs.chart, {
         rangeSelector: {
           selected: 1,

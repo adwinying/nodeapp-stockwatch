@@ -5,7 +5,7 @@ const yahoo = require('yahoo-finance')
 
 const port = process.env.PORT || 6000
 
-let stocks = ['AAPL', 'GOOG', 'FB', 'TSLA']
+let stocks = ['AAPL', 'FB', 'TSLA']
 
 app.get('/', (req, res) => {
   res.json({ status: 'API online' })
@@ -19,8 +19,10 @@ io.on('connection', (socket) => {
   })
 
   socket.on('get_stock_data', () => {
+    // fetch historical data and broadcast
     yahoo.historical({
       symbols: stocks,
+      from: '2012-01-01',
       period: 'd',
     })
     .then((data) => {
@@ -28,7 +30,7 @@ io.on('connection', (socket) => {
       stocks.forEach((stock) => {
         compiledData[stock] = data[stock].map(dataPoint => ({
           date: dataPoint.date,
-          high: dataPoint.high,
+          close: dataPoint.close,
         }))
       })
 
@@ -38,16 +40,26 @@ io.on('connection', (socket) => {
       throw err
     })
 
+    // fetch stock info and broadcast
+    const stockInfo = []
+    let counter = 0
+
     stocks.forEach((stock) => {
       yahoo.quote({
         symbol: stock,
         modules: ['summaryProfile'],
       })
       .then((data) => {
-        socket.emit('stock_info', {
+        stockInfo[stocks.indexOf(stock)] = {
           summaryProfile: data.summaryProfile,
           stock,
-        })
+        }
+        counter += 1
+      })
+      .then(() => {
+        if (counter === stocks.length) {
+          socket.emit('stock_info', stockInfo)
+        }
       })
       .catch((err) => {
         throw err
@@ -55,9 +67,29 @@ io.on('connection', (socket) => {
     })
   })
 
-  socket.on('update_stock', (data) => {
+  socket.on('update_stock_list', (data) => {
     stocks = data
     io.emit('stock_list', data)
+  })
+
+  socket.on('check_stock_valid', (stock) => {
+    yahoo.quote({
+      symbol: stock,
+      modules: ['summaryProfile'],
+    })
+    .then(() => {
+      socket.emit('stock_valid_result', {
+        valid: true,
+        stock,
+      })
+    })
+    .catch((err) => {
+      console.log(err.message);
+      socket.emit('stock_valid_result', {
+        valid: false,
+        stock,
+      })
+    })
   })
 })
 

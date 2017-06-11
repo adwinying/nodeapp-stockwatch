@@ -1,7 +1,10 @@
 <template>
   <div class="container">
     <chart v-bind:data="stockData"></chart>
-    <info v-bind:stockInfo="stockInfo"></info>
+    <info
+      v-bind:stockInfo="stockInfo"
+      v-on:addStock="checkStock"
+    ></info>
     <footer class="text-center">
       <p>
         StockWatch webapp made for &nbsp;
@@ -25,7 +28,7 @@ import Info from './Info'
 export default {
   data: () => ({
     isConnected: false,
-    stocks: [],
+    stockList: [],
     stockData: [],
     stockInfo: [],
   }),
@@ -38,7 +41,7 @@ export default {
 
     stock_list(data) {
       console.log('stock_list received')
-      this.stocks = data
+      this.stockList = data
       this.$socket.emit('get_stock_data')
     },
 
@@ -49,10 +52,18 @@ export default {
 
     stock_info(data) {
       console.log('stock_info received')
-      this.stockInfo.push({
-        ...data.summaryProfile,
-        stock: data.stock,
-      })
+      this.stockInfo = data.map(stockProf => ({
+        ...stockProf.summaryProfile,
+        stock: stockProf.stock,
+      }))
+    },
+
+    stock_valid_result(data) {
+      console.log('stock_valid_result received')
+      if (data.valid) {
+        this.stockList.push(data.stock)
+        this.$socket.emit('update_stock_list', this.stockList)
+      }
     },
   },
 
@@ -61,7 +72,9 @@ export default {
   },
 
   methods: {
-
+    checkStock(stockName) {
+      this.$socket.emit('check_stock_valid', stockName.toUpperCase())
+    },
   },
 
   components: {
@@ -72,5 +85,6 @@ export default {
 </script>
 
 <style lang="sass" scoped>
-
+footer
+  padding: 30px 0
 </style>
