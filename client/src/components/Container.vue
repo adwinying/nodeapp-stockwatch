@@ -40,6 +40,7 @@ export default {
     connect() {
       console.log('connected')
       this.isConnected = true
+      this.$socket.emit('get_stock_list')
     },
 
     stock_list(data) {
@@ -70,10 +71,6 @@ export default {
         this.errMsg = 'Invalid stock code'
       }
     },
-  },
-
-  created() {
-    this.$socket.emit('get_stock_list')
   },
 
   methods: {
