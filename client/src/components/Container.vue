@@ -5,6 +5,7 @@
       v-bind:stockInfo="stockInfo"
       v-bind:errMsg="errMsg"
       v-on:addStock="checkStock"
+      v-on:removeStock="removeStock"
     ></info>
     <footer class="text-center">
       <p>
@@ -82,6 +83,15 @@ export default {
         this.$socket.emit('check_stock_valid', stockName.toUpperCase())
       } else {
         this.errMsg = 'Stock already exists'
+      }
+    },
+    removeStock(stockName) {
+      const index = this.stockList.indexOf(stockName)
+      if (index !== -1) {
+        this.stockList.splice(index, 1)
+        this.$socket.emit('update_stock_list', this.stockList)
+      } else {
+        console.error('Stock does not exist in stockArray[]!')
       }
     },
   },

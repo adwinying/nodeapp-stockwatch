@@ -12,6 +12,9 @@
       </div>
       <div v-for="info in stockInfo" class="col-sm-4">
         <div class="well">
+          <span class="stock-remove" v-on:click="onRemove(info.stock)">
+            <i class="fa fa-times" aria-hidden="true"></i>
+          </span>
           <h3>{{info.stock}} </h3>
           <p><i>{{info.industry}}</i></p>
           <p>{{info.longBusinessSummary.slice(0, 160) + '...'}}</p>
@@ -62,6 +65,9 @@ export default {
     onAdd() {
       this.$emit('addStock', this.newStockName)
     },
+    onRemove(stockName) {
+      this.$emit('removeStock', stockName)
+    },
   },
   watch: {
     stockInfo() {
@@ -77,6 +83,15 @@ export default {
 
 .stock-info-loading
   padding-bottom: 40px
+
+.stock-remove
+  float: right
+  font-size: 1.5em
+
+  &:hover
+    cursor: pointer
+    cursor: hand
+    opacity: 0.6
 
 .stock-add
   h3
