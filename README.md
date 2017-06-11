@@ -94,7 +94,6 @@ Input:
 (event: 'update_stock_list')
 ['AAPL', 'GOOG', 'FB', 'TWTR']
 
- */
 Output:
 (event: 'stock_list')
 ['AAPL', 'GOOG', 'FB', 'TWTR']
@@ -109,6 +108,7 @@ socket.on('check_stock_valid', (stockCode) => {
   io.emit('stock_valid_result', valid)
 })
 
+/*
 Input:
 (event: 'check_stock_valid')
 'GOOG'
@@ -126,4 +126,5 @@ Output:
   stock: 'ASDFG',
   valid: false
 }
+*/
 ```
