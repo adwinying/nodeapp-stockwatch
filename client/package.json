@@ -15,7 +15,8 @@
   },
   "dependencies": {
     "highcharts": "^5.0.12",
-    "vue": "^2.3.3",
+    "loader-utils": "^1.1.0",
+    "vue": "^2.5.9",
     "vue-socket.io": "^2.1.1-a"
   },
   "devDependencies": {
@@ -76,9 +77,9 @@
     "sinon": "^2.1.0",
     "sinon-chai": "^2.8.0",
     "url-loader": "^0.5.8",
-    "vue-loader": "^12.1.0",
+    "vue-loader": "^12.2.2",
     "vue-style-loader": "^3.0.1",
-    "vue-template-compiler": "^2.3.3",
+    "vue-template-compiler": "^2.5.9",
     "webpack": "^2.6.1",
     "webpack-bundle-analyzer": "^2.2.1",
     "webpack-dev-middleware": "^1.10.0",
